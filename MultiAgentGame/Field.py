@@ -18,7 +18,6 @@ class Field():
 
     def setFieldValXY(self, x, y, val): # 座標地点の値を変更
         self.field[y][x] = val
-        print(self.field)
 
     def getAround(self, x, y, wid):     # 周囲の状況を取得
         length = wid * 2 + 1                # 一辺の長さの計算
