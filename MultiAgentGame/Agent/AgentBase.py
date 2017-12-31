@@ -13,38 +13,64 @@ class AgentBase():
         self.field = field
         self.x, self.y = self.__setLocation()
     
+
     # Public Method
     def resetLocation(self, field):     # エージェントの再配置
         self.field = field
         self.x, self.y = self.__setLocation()
 
-    def move(self, id):                 # エージェントの移動（上 下 左 右 : 0 1 2 3）
+    def move(self, id):                 # エージェントの移動（上 下 左 右 留: 0 1 2 3 4）
         if id == 0 and self.__can_move( 0, -1 ):
             self.field.setFieldValXY(self.x, self.y, 0)
             self.y += -1;
-            self.field.setFieldValXY(self.x, self.y, 1)
+            self.field.setFieldValXY(self.x, self.y, self.type)
+            return True
+
         elif id == 1 and self.__can_move( 0, 1 ):
             self.field.setFieldValXY(self.x, self.y, 0)
             self.y += 1;
-            self.field.setFieldValXY(self.x, self.y, 1)
+            self.field.setFieldValXY(self.x, self.y, self.type)
+            return True
+
         elif id == 2 and self.__can_move( -1, 0 ):
             self.field.setFieldValXY(self.x, self.y, 0)
             self.x += -1;
-            self.field.setFieldValXY(self.x, self.y, 1)
+            self.field.setFieldValXY(self.x, self.y, self.type)
+            return True
+
         elif id == 3 and self.__can_move( 1, 0 ):
             self.field.setFieldValXY(self.x, self.y, 0)
             self.x += 1;
-            self.field.setFieldValXY(self.x, self.y, 1)
+            self.field.setFieldValXY(self.x, self.y, self.type)
+            return True
 
-    def update(self):
+        elif id == 4:
+            return True
+        
+        return False
+
+    def update(self):                   # 状況の更新
         self.around = self.field.getAround( self.x, self.y, 2 )
-        print(self.field.field)
+
+    def invalid(self):
+        self.field.setFieldValXY(self.x, self.y, 0)
+
+    def get_around(self):
+        return self.around
+
+    def set_color(self, color):
+        self.color = color
+
+    def draw(self, img, size):
+        img = cv2.rectangle( img, ( self.x * size, self.y * size), ( (self.x + 1) * size, (self.y + 1) * size ), self.color, -1)
+        return img
 
     # Private Method
     def __setLocation(self):
-        tx = random.randint(0, self.field.MAX - 1)
-        ty = random.randint(0, self.field.MAX - 1)
+        tx = ty = 0
         while(True):
+            tx = random.randint(0, self.field.MAX - 1)
+            ty = random.randint(0, self.field.MAX - 1)
             if self.field.getFieldVal(tx, ty) == 0:
                 self.field.setFieldValXY(tx, ty, self.type) 
                 break
@@ -52,8 +78,7 @@ class AgentBase():
 
     def __can_move(self, mx, my):
         pos = (int)( len( self.around ) / 2 )
-        print(pos + mx, pos + my)
-        if self.around[pos + my][pos + mx] == -1:
+        if self.around[pos + my][pos + mx] != 0:
             return False
         else:
             return True
