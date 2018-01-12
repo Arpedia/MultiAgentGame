@@ -10,6 +10,9 @@ class Field():
         self.MAX = x
         
     # Public Get Method
+    def reset(self, x):
+        self.field = np.zeros( (x, x), np.int8 )
+
     def getField(self):
         return self.field
 

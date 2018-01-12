@@ -20,12 +20,17 @@ class TargetAgent(AgentBase):
         self.validFlag = True
 
     def action(self):
-        # self.update()
+        self.update()
         around = self.get_around()
         moveIndex = self.__refine_actionIndex(around)
         while(True):
             if self.move( random.choice( moveIndex ) ):
                 break
+
+    def judgement(self):
+        around = self.get_around()
+        if self.__existAgent(around):
+            self.caught()
 
     def caught(self):
         self.validFlag = False
@@ -81,6 +86,11 @@ class TargetAgent(AgentBase):
             action_index.remove(4)
 
         return action_index
+
+    def __existAgent(self, around):
+        if 2 in around:
+            return True
+        return False
 
     # For Accessor Methods
     def __get_validFlag(self):

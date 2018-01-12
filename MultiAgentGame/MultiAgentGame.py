@@ -21,24 +21,16 @@ if __name__ == "__main__":
 
     size = (int)( WindowSize / fieldLegth )
 
-    x = Field.Field(fieldLegth)
+    f = Field.Field(fieldLegth)
 
     TargetList = []
     AgentList = []
     for i in range(targetNum):
-        TargetList.append(TargetAgent(x))
+        TargetList.append(TargetAgent(f))
     for i in range(agentNum):
-        AgentList.append(AgentZ(x))
+        AgentList.append(AgentZ(f))
 
     while( True ):
-
-        # 情報アップデートシーケンス
-        for target in TargetList:
-            if not target.validFlag:
-                continue
-            target.update()
-        for agent in AgentList:
-            agent.update()
 
         # アクションシーケンス
          ## 逃走エージェント
@@ -51,6 +43,14 @@ if __name__ == "__main__":
         for agent in AgentList:
             agent.action()
 
+        # 情報アップデートシーケンス
+        for target in TargetList:
+            if not target.validFlag:
+                continue
+            target.update()
+        for agent in AgentList:
+            agent.update()
+
 
         # 描画シーケンス
         img = np.zeros( (WindowSize, WindowSize, 3), np.uint8 )
@@ -62,8 +62,25 @@ if __name__ == "__main__":
             img = agent.draw(img, size)
 
         cv2.imshow('log', img)
+        print(f.field)
 
         # 確保判定シーケンス
+        for target in TargetList:
+            if not target.validFlag:
+                continue
+            target.judgement()
+
+        # リセットシーケンス
+        targetValidList = []
+        for target in TargetList:
+            targetValidList.append(target.validFlag)
+        if not True in targetValidList:
+            f.reset(fieldLegth)
+            for target in TargetList:
+                img = target.reset(f)
+            for agent in AgentList:
+                img = agent.reset(f)
+
                 
 
 

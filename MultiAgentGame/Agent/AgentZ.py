@@ -18,7 +18,7 @@ class AgentZ(AgentBase):
         self.resetLocation(field)
 
     def action(self):
-        # self.update()
+        self.update()
         around = self.get_around()
         index = self.__nextAction( around )
         if len(index) > 0:
