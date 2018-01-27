@@ -20,15 +20,14 @@ class TargetAgent(AgentBase):
         self.validFlag = True
 
     def action(self):
-        self.update()
-        around = self.get_around()
+        around = self.get_around(3)
         moveIndex = self.__refine_actionIndex(around)
         while(True):
             if self.move( random.choice( moveIndex ) ):
                 break
 
     def judgement(self):
-        around = self.get_around()
+        around = self.get_around(1)
         if self.__existAgent(around):
             self.caught()
 
@@ -45,8 +44,10 @@ class TargetAgent(AgentBase):
 
         # 上三角の判定
         around[1][0] = 0
-        around[1][4] = 0
-        for around_x in around[:2]:
+        around[1][6] = 0
+        around[2][0] = around[2][1] = 0
+        around[2][6] = around[2][5] = 0
+        for around_x in around[:3]:
             if 2 in around_x and 0 in action_index:
                 action_index.remove(0)
                 escapeFlag = True
@@ -54,9 +55,11 @@ class TargetAgent(AgentBase):
 
         around = around_save
         # 下三角の判定
-        around[3][0] = 0
-        around[3][4] = 0
-        for around_x in around[3:]:
+        around[5][0] = 0
+        around[5][6] = 0
+        around[4][0] = around[4][1] = 0
+        around[4][6] = around[4][5] = 0
+        for around_x in around[4:]:
             if 2 in around_x and 1 in action_index:
                 action_index.remove(1)
                 escapeFlag = True
@@ -65,19 +68,23 @@ class TargetAgent(AgentBase):
         around = around_save
         # 左三角の判定
         around[0][1] = 0
-        around[4][1] = 0
+        around[6][1] = 0
+        around[0][2] = around[1][2] = 0
+        around[6][2] = around[5][2] = 0
         for around_x in around:
-            if 2 in around_x[:2] and 2 in action_index:
+            if 2 in around_x[:3] and 2 in action_index:
                 action_index.remove(2)
                 escapeFlag = True
                 break
 
         around = around_save
-        # 下三角の判定
-        around[0][3] = 0
-        around[4][3] = 0
+        # 右三角の判定
+        around[0][5] = 0
+        around[6][5] = 0
+        around[0][4] = around[1][4] = 0
+        around[6][4] = around[5][4] = 0
         for around_x in around:
-            if 2 in around_x[3:] and 3 in action_index:
+            if 2 in around_x[4:] and 3 in action_index:
                 action_index.remove(3)
                 escapeFlag = True
                 break

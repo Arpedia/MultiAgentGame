@@ -55,7 +55,8 @@ class AgentBase():
     def invalid(self):
         self.field.setFieldValXY(self.x, self.y, 0)
 
-    def get_around(self):
+    def get_around(self, width):
+        self.around = self.field.getAround( self.x, self.y, width )
         return self.around
 
     def set_color(self, color):

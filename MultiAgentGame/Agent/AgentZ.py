@@ -18,30 +18,12 @@ class AgentZ(AgentBase):
         self.resetLocation(field)
 
     def action(self):
-        self.update()
-        around = self.get_around()
+        around = self.get_around(2)
         index = self.__nextAction( around )
         if len(index) > 0:
             self.move( random.choice(index) )
         else:
             self.move( random.choice( [i for i in range(4)] ) )
-
-    def judge(self, targetlist):
-        around = self.get_around()
-        targetCoordinate = []
-        for i in range(1, 4):
-            flag = True
-            for j in range(1, 4):
-                if around[i][j] == 1:
-                    targetCoordinate = [self.y + i - 2, self.x + j - 2]       # y, xの順
-                    flag = False
-            if not flag:
-                break
-
-
-        for target in targetlist:
-            if [target.y, target.x] == targetCoordinate:
-                target.caught()
 
     # Private Method
     def __nextAction(self, around):

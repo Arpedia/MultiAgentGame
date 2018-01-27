@@ -4,20 +4,28 @@
 import numpy as np
 import cv2
 import random
+from matplotlib import pyplot
 
 # Make Library
 import Field
 from Agent.AgentBase import AgentBase
 from Agent.TargetAgent import TargetAgent
 from Agent.AgentZ import AgentZ
+from Agent.AgentY import AgentY
 
 if __name__ == "__main__":
 
-    fieldLegth = 15
+    fieldLegth = 25
     WindowSize = 512
+    TrialCount = 500
+    MaxStep = 2000
+    Count = 0
+    Step = 0
 
     targetNum = 3
     agentNum = 2
+
+    Result = []
 
     size = (int)( WindowSize / fieldLegth )
 
@@ -28,9 +36,11 @@ if __name__ == "__main__":
     for i in range(targetNum):
         TargetList.append(TargetAgent(f))
     for i in range(agentNum):
-        AgentList.append(AgentZ(f))
+        ##AgentList.append(AgentZ(f))
+        AgentList.append(AgentY(f))
 
-    while( True ):
+    while( Count < TrialCount ):
+        Step += 1
 
         # アクションシーケンス
          ## 逃走エージェント
@@ -39,9 +49,12 @@ if __name__ == "__main__":
                 continue
             target.action()
 
-         ## 確保エージェント
+         ## 確保エージェント--AgentZ
+        #for agent in AgentList:
+        #    agent.action()
+         ## 確保エージェント--AgentY
         for agent in AgentList:
-            agent.action()
+            agent.action(Count, TrialCount)
 
         # 情報アップデートシーケンス
         for target in TargetList:
@@ -60,9 +73,7 @@ if __name__ == "__main__":
             img = target.draw(img, size)
         for agent in AgentList:
             img = agent.draw(img, size)
-
         cv2.imshow('log', img)
-        print(f.field)
 
         # 確保判定シーケンス
         for target in TargetList:
@@ -74,14 +85,19 @@ if __name__ == "__main__":
         targetValidList = []
         for target in TargetList:
             targetValidList.append(target.validFlag)
-        if not True in targetValidList:
+        if not True in targetValidList or Step > MaxStep:
             f.reset(fieldLegth)
             for target in TargetList:
                 img = target.reset(f)
             for agent in AgentList:
                 img = agent.reset(f)
-
-                
-
+            Count += 1
+            print(str(Count) + ":" + str(Step))
+            Result.append(Step)
+            Step = 0
+        print(str(Count) + ":" + str(Step) + str(not True in targetValidList))
 
         if cv2.waitKey() == 27: break 
+
+    pyplot.plot(range(len(Result)), Result)
+    pyplot.show()

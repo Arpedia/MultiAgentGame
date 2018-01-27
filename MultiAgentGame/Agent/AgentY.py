@@ -6,44 +6,86 @@ import random
 import Field
 from Agent.AgentBase import AgentBase
 
-# 確保エージェント（周囲状況で行動判断）
+# 確保エージェント（座標で行動判断）
 class AgentY(AgentBase):
 
     def __init__(self, field):
-        self = AgentBase(field, 2)
+        super().__init__(field, 2)
+        self.set_color( [180, 100, 200] )
+        self.__resetQtable(field.get_MAX())
+        self.LearnRate = 0.3
+        self.Discount = 0.6
+
 
     # Public Method
     def reset(self, field):
         self.resetLocation(field)
 
-    def action(self):
-        self.update()
-        around = self.get_around()
-        index = self.__nextAction( around )
+    def action(self, count, MaxStep):
+        around = self.get_around(2)
+        index = self.__nextActionNearbyTarget( around )
         if len(index) > 0:
             self.move( random.choice(index) )
+            self.Qupdate = False
         else:
-            self.move( random.choice( [i for i in range(4)] ) )
-
-    def judge(self, targetlist):
-        around = self.get_around()
-        targetCoordinate = []
-        for i in range(1, 4):
-            flag = True
-            for j in range(1, 4):
-                if around[i][j] == 1:
-                    targetCoordinate = [self.y + i - 2, self.x + j - 2]       # y, xの順
-                    flag = False
-            if not flag:
-                break
+            act = 0
+            if ( int(count / MaxStep * 10) > random.randint(1, 10)):
+                act = self.__getValueFromQTable(self.x, self.y)
+                self.move( act )
+                self.__remindPreviousAction(self.x, self.y, act)
+            else:
+                act = random.choice(range(4))
+                self.move( act )
+                self.__remindPreviousAction(self.x, self.y, act)
+            self.Qupdate = True
 
 
-        for target in targetlist:
-            if [target.y, target.x] == targetCoordinate:
-                target.caught()
+    def update(self):
+        super().update()
+        if(self.Qupdate):
+            self.Qtable[self.preX][self.preY][self.preAct] += self.LearnRate * ( self.__getReward(self.x, self.y) + self.Discount * self.__getMaxQValue(self.x, self.y) - self.Qtable[self.preX][self.preY][self.preAct] )
+
 
     # Private Method
-    def __nextAction(self, around):
+    def __resetQtable(self, size):
+        self.Qtable = []
+        for i in range(size):
+            bufi = []
+            for j in range(size):
+                bufj = []
+                for k in range(5):
+                    bufj.append(25)
+                bufi.append(bufj)
+            self.Qtable.append(bufi)
+
+    def __getValueFromQTable(self, x, y, act):
+         return self.Qtable[x][y][act]
+
+    def __remindPreviousAction(self, x, y, act):
+         self.preX = x
+         self.preY = y
+         self.preAct = act
+
+    def __getMaxQValue(self, x, y):
+        arr = self.Qtable[x][y]
+        return self.__getMaxInArray(arr)
+
+    def __getMaxInArray(self, Array):
+        buf = 0
+        for arr in Array:
+            if buf <= arr:
+                buf = arr
+
+        return buf
+
+    def __getReward(self, x, y):
+        around = self.get_around(2)
+        for around_y in around:
+            if 1 in around_y:
+                return 5
+        return -1
+
+    def __nextActionNearbyTarget(self, around):
         action_index = []
         around_save = around
 
@@ -83,4 +125,6 @@ class AgentY(AgentBase):
                 break
 
         return action_index
+
+
 
