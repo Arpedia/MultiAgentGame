@@ -22,9 +22,14 @@ class TargetAgent(AgentBase):
     def action(self):
         around = self.get_around(3)
         moveIndex = self.__refine_actionIndex(around)
+        counter = 0
         while(True):
             if self.move( random.choice( moveIndex ) ):
                 break
+            if counter == 10:
+                self.move(4)
+                break
+            counter += 1
 
     def judgement(self):
         around = self.get_around(1)

@@ -20,6 +20,10 @@ class AgentY(AgentBase):
     # Public Method
     def reset(self, field):
         self.resetLocation(field)
+        del self.preAct
+        del self.preX
+        del self.preY
+        self.Qupdate = False
 
     def action(self, count, MaxStep):
         around = self.get_around(2)
@@ -29,7 +33,7 @@ class AgentY(AgentBase):
             self.Qupdate = False
         else:
             act = 0
-            if ( int(count / MaxStep * 10) > random.randint(1, 10)):
+            if ( int(count / MaxStep * 10) > random.randint(1, 10) ):
                 act = self.__getValueFromQTable(self.x, self.y)
                 self.move( act )
                 self.__remindPreviousAction(self.x, self.y, act)

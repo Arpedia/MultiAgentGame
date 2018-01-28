@@ -97,7 +97,7 @@ if __name__ == "__main__":
             Step = 0
         print(str(Count) + ":" + str(Step) + str(not True in targetValidList))
 
-        if cv2.waitKey() == 27: break 
+        #if cv2.waitKey() == 27: break 
 
     pyplot.plot(range(len(Result)), Result)
     pyplot.show()
