@@ -18,11 +18,11 @@ if __name__ == "__main__":
     fieldLegth = 25
     WindowSize = 512
     TrialCount = 500
-    MaxStep = 2000
+    MaxStep = 2500
     Count = 0
     Step = 0
 
-    targetNum = 3
+    targetNum = 5
     agentNum = 2
 
     Result = []
@@ -50,8 +50,8 @@ if __name__ == "__main__":
             target.action()
 
          ## 確保エージェント--AgentZ
-        #for agent in AgentList:
-        #    agent.action()
+        ##for agent in AgentList:
+        ##    agent.action()
          ## 確保エージェント--AgentY
         for agent in AgentList:
             agent.action(Count, TrialCount)
@@ -73,13 +73,14 @@ if __name__ == "__main__":
             img = target.draw(img, size)
         for agent in AgentList:
             img = agent.draw(img, size)
-        cv2.imshow('log', img)
+        #cv2.imshow('log', img)
 
         # 確保判定シーケンス
         for target in TargetList:
             if not target.validFlag:
                 continue
             target.judgement()
+
 
         # リセットシーケンス
         targetValidList = []
@@ -95,9 +96,32 @@ if __name__ == "__main__":
             print(str(Count) + ":" + str(Step))
             Result.append(Step)
             Step = 0
-        print(str(Count) + ":" + str(Step) + str(not True in targetValidList))
 
         #if cv2.waitKey() == 27: break 
 
-    pyplot.plot(range(len(Result)), Result)
+    average5 = []
+    average10 = []
+    average50 = []
+    counter = buf5 = buf10 = buf50 = 0
+    for idx in range(len(Result)):
+        buf5 += Result[idx]
+        buf10 += Result[idx]
+        buf50 += Result[idx]
+        if (idx + 1) % 5 == 0:
+            average5.append(buf5 / 5.0)
+            buf5 = 0
+        if (idx + 1) % 10 == 0:
+            average10.append(buf10 / 10.0)
+            buf10 = 0
+        if (idx + 1) % 50 == 0:
+            average50.append(buf50 / 50.0)
+            buf50 = 0
+    pyplot.plot(range(len(Result)), Result, color='lightgray', label = "Steps")
+    pyplot.plot([i * 5 for i in range(len(average5))], average5, color='blue', label = "Steps(Average 5)")
+    pyplot.plot([i * 10 for i in range(len(average10))], average10, color='green', label = "Steps(Average 10)")
+    pyplot.plot([i * 50 for i in range(len(average50))], average50, color='red', label = "Steps(Average 50)")
+    pyplot.title("Steps - Trials")
+    pyplot.xlabel("Trial Counts")
+    pyplot.ylabel("Steps")
+    pyplot.legend()
     pyplot.show()

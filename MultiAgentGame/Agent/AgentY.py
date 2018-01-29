@@ -28,27 +28,43 @@ class AgentY(AgentBase):
     def action(self, count, MaxStep):
         around = self.get_around(2)
         index = self.__nextActionNearbyTarget( around )
+        oldx = self.x
+        oldy = self.y
         if len(index) > 0:
             self.move( random.choice(index) )
             self.Qupdate = False
         else:
             act = 0
-            if ( int(count / MaxStep * 10) > random.randint(1, 10) ):
-                act = self.__getValueFromQTable(self.x, self.y)
-                self.move( act )
-                self.__remindPreviousAction(self.x, self.y, act)
+            if ( int(( count / MaxStep )* 10 + 1) > random.randint(0, 12) ):
+                LimitCounter = 0
+                while(True):
+                    act = random.choice(self.__getMaxQValueAction(self.x, self.y))
+                    if self.move( act ):
+                        self.__remindPreviousAction(oldx, oldy, act)
+                        break
+                    LimitCounter += 1
+                    if LimitCounter > 10:
+                        while(True):
+                            act = random.choice(range(4))
+                            if self.move( act ):
+                                self.__remindPreviousAction(oldx, oldy, act)
+                                break
+                        break
             else:
-                act = random.choice(range(4))
-                self.move( act )
-                self.__remindPreviousAction(self.x, self.y, act)
+                while(True):
+                    act = random.choice(range(4))
+                    if self.move( act ):
+                        self.__remindPreviousAction(oldx, oldy, act)
+                        break
             self.Qupdate = True
 
 
     def update(self):
         super().update()
         if(self.Qupdate):
-            self.Qtable[self.preX][self.preY][self.preAct] += self.LearnRate * ( self.__getReward(self.x, self.y) + self.Discount * self.__getMaxQValue(self.x, self.y) - self.Qtable[self.preX][self.preY][self.preAct] )
-
+            self.Qtable[self.preY][self.preX][self.preAct] += self.LearnRate * ( self.__getReward(self.x, self.y) + self.Discount * self.__getMaxQValue(self.x, self.y) - self.Qtable[self.preY][self.preX][self.preAct] )
+            if self.Qtable[self.preY][self.preX][self.preAct] < 0:
+                self.Qtable[self.preY][self.preX][self.preAct] = 0
 
     # Private Method
     def __resetQtable(self, size):
@@ -57,13 +73,25 @@ class AgentY(AgentBase):
             bufi = []
             for j in range(size):
                 bufj = []
-                for k in range(5):
-                    bufj.append(25)
+                for k in range(4):
+                    if j == 0 and k == 2:
+                        bufj.append(-1)
+                    elif j == size - 1 and k == 3:
+                        bufj.append(-1)
+                    elif i == 0 and k == 0:
+                        bufj.append(-1)
+                    elif i == size - 1 and k == 1:
+                        bufj.append(-1)
+                    else:
+                        bufj.append(25)
                 bufi.append(bufj)
             self.Qtable.append(bufi)
 
     def __getValueFromQTable(self, x, y, act):
-         return self.Qtable[x][y][act]
+         return self.Qtable[y][x][act]
+
+    def __setValueIntoQTable(self, x, y ,act, val):
+        self.Qtable[y][x][act] = val
 
     def __remindPreviousAction(self, x, y, act):
          self.preX = x
@@ -71,8 +99,18 @@ class AgentY(AgentBase):
          self.preAct = act
 
     def __getMaxQValue(self, x, y):
-        arr = self.Qtable[x][y]
+        arr = self.Qtable[y][x]
         return self.__getMaxInArray(arr)
+
+    def __getMaxQValueAction(self, x, y):
+        arr = self.Qtable[y][x]
+        MaxValue = self.__getMaxInArray(arr)
+        actionArray = []
+        for i in range(len(arr)):
+            if MaxValue == arr[i]:
+                actionArray.append(i)
+
+        return actionArray
 
     def __getMaxInArray(self, Array):
         buf = 0

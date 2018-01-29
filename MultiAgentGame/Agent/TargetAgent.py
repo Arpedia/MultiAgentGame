@@ -24,10 +24,10 @@ class TargetAgent(AgentBase):
         moveIndex = self.__refine_actionIndex(around)
         counter = 0
         while(True):
-            if self.move( random.choice( moveIndex ) ):
-                break
-            if counter == 10:
+            if counter == 10 or len(moveIndex) == 0:
                 self.move(4)
+                break
+            if self.move( random.choice( moveIndex ) ):
                 break
             counter += 1
 
