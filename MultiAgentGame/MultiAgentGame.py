@@ -17,13 +17,15 @@ if __name__ == "__main__":
 
     fieldLegth = 25
     WindowSize = 512
-    TrialCount = 500
+    TrialCount = 1000
     MaxStep = 2500
     Count = 0
     Step = 0
 
     targetNum = 5
     agentNum = 2
+
+    AgentLogic = 'Y'
 
     Result = []
 
@@ -36,8 +38,10 @@ if __name__ == "__main__":
     for i in range(targetNum):
         TargetList.append(TargetAgent(f))
     for i in range(agentNum):
-        ##AgentList.append(AgentZ(f))
-        AgentList.append(AgentY(f))
+        if AgentLogic == 'Z':
+            AgentList.append(AgentZ(f))
+        if AgentLogic == 'Y':
+            AgentList.append(AgentY(f))
 
     while( Count < TrialCount ):
         Step += 1
@@ -50,11 +54,13 @@ if __name__ == "__main__":
             target.action()
 
          ## 確保エージェント--AgentZ
-        ##for agent in AgentList:
-        ##    agent.action()
+        if AgentLogic == 'Z':
+            for agent in AgentList:
+                agent.action()
          ## 確保エージェント--AgentY
-        for agent in AgentList:
-            agent.action(Count, TrialCount)
+        if AgentLogic == 'Y':
+            for agent in AgentList:
+                agent.action(Count, TrialCount)
 
         # 情報アップデートシーケンス
         for target in TargetList:
@@ -86,7 +92,7 @@ if __name__ == "__main__":
         targetValidList = []
         for target in TargetList:
             targetValidList.append(target.validFlag)
-        if not True in targetValidList or Step > MaxStep:
+        if not True in targetValidList or Step >= MaxStep:
             f.reset(fieldLegth)
             for target in TargetList:
                 img = target.reset(f)
@@ -120,7 +126,10 @@ if __name__ == "__main__":
     pyplot.plot([i * 5 for i in range(len(average5))], average5, color='blue', label = "Steps(Average 5)")
     pyplot.plot([i * 10 for i in range(len(average10))], average10, color='green', label = "Steps(Average 10)")
     pyplot.plot([i * 50 for i in range(len(average50))], average50, color='red', label = "Steps(Average 50)")
-    pyplot.title("Steps - Trials")
+    if AgentLogic == 'Z':
+        pyplot.title("Steps - Trials[Normal]")
+    if AgentLogic == 'Y':
+        pyplot.title("Steps - Trials[Q-Learning]")
     pyplot.xlabel("Trial Counts")
     pyplot.ylabel("Steps")
     pyplot.legend()
