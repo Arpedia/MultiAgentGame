@@ -12,20 +12,21 @@ from Agent.AgentBase import AgentBase
 from Agent.TargetAgent import TargetAgent
 from Agent.AgentZ import AgentZ
 from Agent.AgentY import AgentY
+from Agent.AgentX import AgentX
 
 if __name__ == "__main__":
 
     fieldLegth = 25
     WindowSize = 512
-    TrialCount = 1000
-    MaxStep = 2500
+    TrialCount = 500
+    MaxStep = 2000
     Count = 0
     Step = 0
 
     targetNum = 5
     agentNum = 2
 
-    AgentLogic = 'Y'
+    AgentLogic = 'X'
 
     Result = []
 
@@ -42,11 +43,13 @@ if __name__ == "__main__":
             AgentList.append(AgentZ(f))
         if AgentLogic == 'Y':
             AgentList.append(AgentY(f))
+        if AgentLogic == 'X':
+            AgentList.append(AgentX(f))
 
     while( Count < TrialCount ):
         Step += 1
 
-        # アクションシーケンス
+        # アクションシーケンス---------------------------------------
          ## 逃走エージェント
         for target in TargetList:
             if not target.validFlag:
@@ -61,17 +64,32 @@ if __name__ == "__main__":
         if AgentLogic == 'Y':
             for agent in AgentList:
                 agent.action(Count, TrialCount)
+         ## 確保エージェント--AgentX
+        if AgentLogic == 'X':
+            for num in range(len(AgentList)):
+                AgentList[num].action(AgentList[num - 1], Count, TrialCount)
 
-        # 情報アップデートシーケンス
+
+        # 情報アップデートシーケンス---------------------------------
         for target in TargetList:
             if not target.validFlag:
                 continue
             target.update()
-        for agent in AgentList:
-            agent.update()
+
+        if AgentLogic == 'X':   ## エージェントXの場合はもう一つのターゲットの情報がいるため
+            flag = False
+            for agent in AgentList:
+                if agent.getIsAroundTarget():
+                    flag = True
+                    break
+            for agent in AgentList:
+                agent.update(flag)
+        else:
+            for agent in AgentList:
+                agent.update()
 
 
-        # 描画シーケンス
+        # 描画シーケンス---------------------------------------------
         img = np.zeros( (WindowSize, WindowSize, 3), np.uint8 )
         for target in TargetList:
             if not target.validFlag:
@@ -88,7 +106,7 @@ if __name__ == "__main__":
             target.judgement()
 
 
-        # リセットシーケンス
+        # リセットシーケンス----------------------------------------
         targetValidList = []
         for target in TargetList:
             targetValidList.append(target.validFlag)
@@ -105,6 +123,9 @@ if __name__ == "__main__":
 
         #if cv2.waitKey() == 27: break 
 
+    # END LOOP
+
+    # 結果のグラフ化----------------------------------------------------
     average5 = []
     average10 = []
     average50 = []

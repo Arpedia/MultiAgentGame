@@ -15,6 +15,7 @@ class AgentY(AgentBase):
         self.__resetQtable(field.get_MAX())
         self.LearnRate = 0.3
         self.Discount = 0.6
+        self.QCount = 0
 
 
     # Public Method
@@ -24,6 +25,7 @@ class AgentY(AgentBase):
         del self.preX
         del self.preY
         self.Qupdate = False
+        self.QCount = 0
 
     def action(self, count, MaxStep):
         around = self.get_around(2)
@@ -37,12 +39,16 @@ class AgentY(AgentBase):
             act = 0
             if ( int(( count / MaxStep )* 10 + 1) > random.randint(0, 12) ):
                 LimitCounter = 0
+
                 while(True):
                     act = random.choice(self.__getMaxQValueAction(self.x, self.y))
                     if self.move( act ):
                         self.__remindPreviousAction(oldx, oldy, act)
+                        self.QCount += 1
                         break
                     LimitCounter += 1
+
+                    # 無限ループを抜けるために
                     if LimitCounter > 10:
                         while(True):
                             act = random.choice(range(4))
@@ -65,6 +71,11 @@ class AgentY(AgentBase):
             self.Qtable[self.preY][self.preX][self.preAct] += self.LearnRate * ( self.__getReward(self.x, self.y) + self.Discount * self.__getMaxQValue(self.x, self.y) - self.Qtable[self.preY][self.preX][self.preAct] )
             if self.Qtable[self.preY][self.preX][self.preAct] < 0:
                 self.Qtable[self.preY][self.preX][self.preAct] = 0
+            if self.Qtable[self.preY][self.preX][self.preAct] > 25:
+                self.Qtable[self.preY][self.preX][self.preAct] = 25
+
+    def getQcount(self):
+        return self.QCount
 
     # Private Method
     def __resetQtable(self, size):
