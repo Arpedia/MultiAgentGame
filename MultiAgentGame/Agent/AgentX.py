@@ -15,6 +15,7 @@ class AgentX(AgentBase):
         self.__resetQtable(field.get_MAX())
         self.LearnRate = 0.3
         self.Discount = 0.6
+        self.FindTarget = False
 
 
     # Public Method
@@ -25,6 +26,7 @@ class AgentX(AgentBase):
         del self.preX
         del self.preY
         self.Qupdate = False
+        self.FindTarget = False
         self.QCount = 0
 
     def action(self, otherAgent, count, MaxStep):
@@ -64,12 +66,14 @@ class AgentX(AgentBase):
 
     def update(self, AgentAroundFlag):
         super().update()
-        if(self.Qupdate):
+        if(self.Qupdate and (not AgentAroundFlag or (AgentAroundFlag and not self.FindTarget))):
             self.Qtable[self.preY][self.preX][self.preOther][self.preAct] += self.LearnRate * ( self.__getReward(AgentAroundFlag) + self.Discount * self.__getMaxQValue(self.x, self.y, self.preOther) - self.Qtable[self.preY][self.preX][self.preOther][self.preAct] )
             if self.Qtable[self.preY][self.preX][self.preOther][self.preAct] < 0:
                 self.Qtable[self.preY][self.preX][self.preOther][self.preAct] = 0
             if self.Qtable[self.preY][self.preX][self.preOther][self.preAct] > 25:
                 self.Qtable[self.preY][self.preX][self.preOther][self.preAct] = 25
+        self.FindTarget = AgentAroundFlag
+
 
     def getArea(self):
         size = self.field.get_MAX()
