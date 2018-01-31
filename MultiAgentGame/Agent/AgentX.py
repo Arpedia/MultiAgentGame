@@ -13,9 +13,10 @@ class AgentX(AgentBase):
         super().__init__(field, 2)
         self.set_color( [180, 100, 200] )
         self.__resetQtable(field.get_MAX())
-        self.LearnRate = 0.3
-        self.Discount = 0.6
+        self.LearnRate = 0.5
+        self.Discount = 0.5
         self.FindTarget = False
+        self.QCount = 0
 
 
     # Public Method
@@ -35,12 +36,12 @@ class AgentX(AgentBase):
         oldx = self.x
         oldy = self.y
         otherAgentArea = otherAgent.getArea()
+        act = 0
 
         if len(index) > 0:
             self.move( random.choice(index) )
             self.Qupdate = False
         else:
-            act = 0
             if ( int(( count / MaxStep )* 10 + 1) > random.randint(0, 12) ):
                 act = random.choice(self.__getMaxQValueAction(self.x, self.y, otherAgentArea))
                 LimitCount = 0
@@ -60,13 +61,13 @@ class AgentX(AgentBase):
                     act = random.choice(range(4))
                     if self.move( act ):
                         break
-            self.__remindPreviousAction(oldx, oldy, otherAgentArea, act)
             self.Qupdate = True
-
+        self.__remindPreviousAction(oldx, oldy, otherAgentArea, act)
 
     def update(self, AgentAroundFlag):
         super().update()
-        if(self.Qupdate and (not AgentAroundFlag or (AgentAroundFlag and not self.FindTarget))):
+        if(self.Qupdate and AgentAroundFlag == False or (AgentAroundFlag and self.FindTarget == False)):
+            self.QCount += 1
             self.Qtable[self.preY][self.preX][self.preOther][self.preAct] += self.LearnRate * ( self.__getReward(AgentAroundFlag) + self.Discount * self.__getMaxQValue(self.x, self.y, self.preOther) - self.Qtable[self.preY][self.preX][self.preOther][self.preAct] )
             if self.Qtable[self.preY][self.preX][self.preOther][self.preAct] < 0:
                 self.Qtable[self.preY][self.preX][self.preOther][self.preAct] = 0
@@ -96,6 +97,9 @@ class AgentX(AgentBase):
             if 1 in around_y:
                 return True
         return False
+
+    def getQcount(self):
+        return self.QCount
 
     # Private Method
     def __resetQtable(self, size):

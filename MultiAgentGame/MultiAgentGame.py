@@ -26,7 +26,7 @@ if __name__ == "__main__":
     targetNum = 5
     agentNum = 2
 
-    AgentLogic = 'X'
+    AgentLogic = 'Y'
 
     Result = []
 
@@ -98,6 +98,7 @@ if __name__ == "__main__":
         for agent in AgentList:
             img = agent.draw(img, size)
         #cv2.imshow('log', img)
+        #if cv2.waitKey() == 27: break 
 
         # 確保判定シーケンス
         for target in TargetList:
@@ -115,13 +116,13 @@ if __name__ == "__main__":
             for target in TargetList:
                 img = target.reset(f)
             for agent in AgentList:
+                print(agent.getQcount())
                 img = agent.reset(f)
             Count += 1
             print(str(Count) + ":" + str(Step))
             Result.append(Step)
             Step = 0
 
-        #if cv2.waitKey() == 27: break 
 
     # END LOOP
 
@@ -151,6 +152,8 @@ if __name__ == "__main__":
         pyplot.title("Steps - Trials[Normal]")
     if AgentLogic == 'Y':
         pyplot.title("Steps - Trials[Q-Learning]")
+    if AgentLogic == 'X':
+        pyplot.title("Steps - Trials[Q-Learning-beta]")
     pyplot.xlabel("Trial Counts")
     pyplot.ylabel("Steps")
     pyplot.legend()

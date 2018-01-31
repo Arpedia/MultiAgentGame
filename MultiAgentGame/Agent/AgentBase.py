@@ -50,13 +50,13 @@ class AgentBase():
         return False
 
     def update(self):                   # 状況の更新
-        self.around = self.field.getAround( self.x, self.y, 2 )
+        self.around = self.field.getAround( self.x, self.y, 2, self.type )
 
     def invalid(self):
         self.field.setFieldValXY(self.x, self.y, 0)
 
     def get_around(self, width):
-        self.around = self.field.getAround( self.x, self.y, width )
+        self.around = self.field.getAround( self.x, self.y, width, self.type )
         return self.around
 
     def set_color(self, color):

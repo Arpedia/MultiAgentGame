@@ -22,7 +22,7 @@ class Field():
     def setFieldValXY(self, x, y, val): # 座標地点の値を変更
         self.field[y][x] = val
 
-    def getAround(self, x, y, wid):     # 周囲の状況を取得
+    def getAround(self, x, y, wid, type):     # 周囲の状況を取得
         length = wid * 2 + 1                # 一辺の長さの計算
         around = np.zeros( (length, length), np.int8 )
 
@@ -42,7 +42,7 @@ class Field():
                     continue
                 
                 around[i + wid][j + wid] = self.getFieldVal(px, py)
-        around[wid][wid] = 1               # 自分の位置は1であらわす
+        around[wid][wid] = type               # 自分の位置は1であらわす
 
         return around
 
