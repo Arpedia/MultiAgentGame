@@ -12,6 +12,7 @@ class AgentZ(AgentBase):
     def __init__(self, field):
         super().__init__(field, 2)
         self.set_color( [180, 100, 200] )
+        self.Qcount = 0
 
     # Public Method
     def reset(self, field):
@@ -24,6 +25,9 @@ class AgentZ(AgentBase):
             self.move( random.choice(index) )
         else:
             self.move( random.choice( [i for i in range(4)] ) )
+
+    def getQcount(self):
+        return self.Qcount
 
     # Private Method
     def __nextAction(self, around):

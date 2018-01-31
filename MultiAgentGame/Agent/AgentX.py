@@ -66,7 +66,7 @@ class AgentX(AgentBase):
 
     def update(self, AgentAroundFlag):
         super().update()
-        if(self.Qupdate and AgentAroundFlag == False or (AgentAroundFlag and self.FindTarget == False)):
+        if(self.Qupdate and (AgentAroundFlag == False or (AgentAroundFlag and self.FindTarget == False))):
             self.QCount += 1
             self.Qtable[self.preY][self.preX][self.preOther][self.preAct] += self.LearnRate * ( self.__getReward(AgentAroundFlag) + self.Discount * self.__getMaxQValue(self.x, self.y, self.preOther) - self.Qtable[self.preY][self.preX][self.preOther][self.preAct] )
             if self.Qtable[self.preY][self.preX][self.preOther][self.preAct] < 0:

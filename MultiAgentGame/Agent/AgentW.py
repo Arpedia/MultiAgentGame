@@ -7,12 +7,13 @@ import Field
 from Agent.AgentBase import AgentBase
 
 # 確保エージェント（座標で行動判断）
-class AgentY(AgentBase):
+class AgentW(AgentBase):
 
     def __init__(self, field):
         super().__init__(field, 2)
         self.set_color( [180, 100, 200] )
-        self.__resetQtable(field.get_MAX())
+        self.FieldSize = field.get_MAX()
+        self.__resetQtable()
         self.LearnRate = 0.3
         self.Discount = 0.6
         self.QCount = 0
@@ -25,10 +26,10 @@ class AgentY(AgentBase):
         del self.preX
         del self.preY
         self.Qupdate = False
+        self.QCount = 0
 
     def action(self, count, MaxStep):
-        around = self.get_around(2)
-        index = self.__nextActionNearbyTarget( around )
+        index = self.__nextActionNearbyTarget( self.get_around(2) )
         oldx = self.x
         oldy = self.y
         act = 0
@@ -67,7 +68,7 @@ class AgentY(AgentBase):
     def update(self):
         super().update()
         if(self.Qupdate):
-            self.Qtable[self.preY][self.preX][self.preAct] += self.LearnRate * ( self.__getReward(self.x, self.y) + self.Discount * self.__getMaxQValue(self.x, self.y) - self.Qtable[self.preY][self.preX][self.preAct] )
+            self.Qtable[self.preY][self.preX][self.preAct] += self.LearnRate * ( self.__getReward() + self.Discount * self.__getMaxQValue(self.x, self.y) - self.Qtable[self.preY][self.preX][self.preAct] )
             if self.Qtable[self.preY][self.preX][self.preAct] < 0:
                 self.Qtable[self.preY][self.preX][self.preAct] = 0
             if self.Qtable[self.preY][self.preX][self.preAct] > 25:
@@ -77,43 +78,35 @@ class AgentY(AgentBase):
         return self.QCount
 
     # Private Method
-    def __resetQtable(self, size):
+    def __resetQtable(self):
         self.Qtable = []
+        size = int(self.FieldSize / 5)
         for i in range(size):
             bufi = []
             for j in range(size):
                 bufj = []
                 for k in range(4):
-                    if j == 0 and k == 2:
-                        bufj.append(-1)
-                    elif j == size - 1 and k == 3:
-                        bufj.append(-1)
-                    elif i == 0 and k == 0:
-                        bufj.append(-1)
-                    elif i == size - 1 and k == 1:
-                        bufj.append(-1)
-                    else:
-                        bufj.append(25)
+                    bufj.append(25)
                 bufi.append(bufj)
             self.Qtable.append(bufi)
 
     def __getValueFromQTable(self, x, y, act):
-         return self.Qtable[y][x][act]
+         return self.Qtable[(int)(y / 5)][(int)(x / 5)][act]
 
     def __setValueIntoQTable(self, x, y ,act, val):
-        self.Qtable[y][x][act] = val
+        self.Qtable[(int)(y / 5)][(int)(x / 5)][act] = val
 
     def __remindPreviousAction(self, x, y, act):
-         self.preX = x
-         self.preY = y
+         self.preX = (int)(x / 5)
+         self.preY = (int)(y / 5)
          self.preAct = act
 
     def __getMaxQValue(self, x, y):
-        arr = self.Qtable[y][x]
+        arr = self.Qtable[(int)(y / 5)][(int)(x / 5)]
         return self.__getMaxInArray(arr)
 
     def __getMaxQValueAction(self, x, y):
-        arr = self.Qtable[y][x]
+        arr = self.Qtable[(int)(y / 5)][(int)(x / 5)]
         MaxValue = self.__getMaxInArray(arr)
         actionArray = []
         for i in range(len(arr)):
@@ -130,7 +123,7 @@ class AgentY(AgentBase):
 
         return buf
 
-    def __getReward(self, x, y):
+    def __getReward(self):
         around = self.get_around(2)
         for around_y in around:
             if 1 in around_y:

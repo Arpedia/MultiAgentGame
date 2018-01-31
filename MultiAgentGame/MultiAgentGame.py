@@ -13,20 +13,21 @@ from Agent.TargetAgent import TargetAgent
 from Agent.AgentZ import AgentZ
 from Agent.AgentY import AgentY
 from Agent.AgentX import AgentX
+from Agent.AgentW import AgentW
 
 if __name__ == "__main__":
 
-    fieldLegth = 25
+    fieldLegth = 40
     WindowSize = 512
-    TrialCount = 500
-    MaxStep = 2000
+    TrialCount = 1000
+    MaxStep = 3000
     Count = 0
     Step = 0
 
     targetNum = 5
     agentNum = 2
 
-    AgentLogic = 'Y'
+    AgentLogic = 'W'
 
     Result = []
 
@@ -45,6 +46,8 @@ if __name__ == "__main__":
             AgentList.append(AgentY(f))
         if AgentLogic == 'X':
             AgentList.append(AgentX(f))
+        if AgentLogic == 'W':
+            AgentList.append(AgentW(f))
 
     while( Count < TrialCount ):
         Step += 1
@@ -68,6 +71,10 @@ if __name__ == "__main__":
         if AgentLogic == 'X':
             for num in range(len(AgentList)):
                 AgentList[num].action(AgentList[num - 1], Count, TrialCount)
+         ## 確保エージェント--AgentW
+        if AgentLogic == 'W':
+            for agent in AgentList:
+                agent.action(Count, TrialCount)
 
 
         # 情報アップデートシーケンス---------------------------------
@@ -116,7 +123,7 @@ if __name__ == "__main__":
             for target in TargetList:
                 img = target.reset(f)
             for agent in AgentList:
-                print(agent.getQcount())
+                #print(agent.getQcount())
                 img = agent.reset(f)
             Count += 1
             print(str(Count) + ":" + str(Step))
@@ -130,8 +137,10 @@ if __name__ == "__main__":
     average5 = []
     average10 = []
     average50 = []
+    total = 0
     counter = buf5 = buf10 = buf50 = 0
     for idx in range(len(Result)):
+        total += Result[idx]
         buf5 += Result[idx]
         buf10 += Result[idx]
         buf50 += Result[idx]
@@ -144,6 +153,7 @@ if __name__ == "__main__":
         if (idx + 1) % 50 == 0:
             average50.append(buf50 / 50.0)
             buf50 = 0
+    print("TOTAL AVERAGE:" + str(total / TrialCount))
     pyplot.plot(range(len(Result)), Result, color='lightgray', label = "Steps")
     pyplot.plot([i * 5 for i in range(len(average5))], average5, color='blue', label = "Steps(Average 5)")
     pyplot.plot([i * 10 for i in range(len(average10))], average10, color='green', label = "Steps(Average 10)")
@@ -151,9 +161,11 @@ if __name__ == "__main__":
     if AgentLogic == 'Z':
         pyplot.title("Steps - Trials[Normal]")
     if AgentLogic == 'Y':
-        pyplot.title("Steps - Trials[Q-Learning]")
+        pyplot.title("Steps - Trials[Q-Learning-ALPHA]")
     if AgentLogic == 'X':
-        pyplot.title("Steps - Trials[Q-Learning-beta]")
+        pyplot.title("Steps - Trials[Q-Learning-BETA]")
+    if AgentLogic == 'W':
+        pyplot.title("Steps - Trials[Q-Learning-GAMMA]")
     pyplot.xlabel("Trial Counts")
     pyplot.ylabel("Steps")
     pyplot.legend()

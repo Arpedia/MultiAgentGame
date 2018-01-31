@@ -25,6 +25,9 @@
     <Compile Include="Agent\AgentBase.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Agent\AgentW.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Agent\AgentX.py">
       <SubType>Code</SubType>
     </Compile>
