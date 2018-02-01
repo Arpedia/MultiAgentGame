@@ -17,7 +17,7 @@ from Agent.AgentW import AgentW
 
 if __name__ == "__main__":
 
-    fieldLegth = 40
+    fieldLegth = 30
     WindowSize = 512
     TrialCount = 1000
     MaxStep = 3000
@@ -138,22 +138,26 @@ if __name__ == "__main__":
     average10 = []
     average50 = []
     total = 0
+    success = 0
     counter = buf5 = buf10 = buf50 = 0
     for idx in range(len(Result)):
         total += Result[idx]
         buf5 += Result[idx]
         buf10 += Result[idx]
         buf50 += Result[idx]
-        if (idx + 1) % 5 == 0:
+        if Result[idx] < MaxStep:
+            success += 1
+        if idx % 5 == 4:
             average5.append(buf5 / 5.0)
             buf5 = 0
-        if (idx + 1) % 10 == 0:
+        if idx % 10 == 9:
             average10.append(buf10 / 10.0)
             buf10 = 0
-        if (idx + 1) % 50 == 0:
+        if idx % 50 == 49:
             average50.append(buf50 / 50.0)
             buf50 = 0
-    print("TOTAL AVERAGE:" + str(total / TrialCount))
+    print("TOTAL AVERAGE: " + str(total / TrialCount))
+    print("SUCCESS RATE: " + str(success / TrialCount * 100) + "%")
     pyplot.plot(range(len(Result)), Result, color='lightgray', label = "Steps")
     pyplot.plot([i * 5 for i in range(len(average5))], average5, color='blue', label = "Steps(Average 5)")
     pyplot.plot([i * 10 for i in range(len(average10))], average10, color='green', label = "Steps(Average 10)")

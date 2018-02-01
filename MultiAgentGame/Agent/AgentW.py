@@ -14,8 +14,8 @@ class AgentW(AgentBase):
         self.set_color( [180, 100, 200] )
         self.FieldSize = field.get_MAX()
         self.__resetQtable()
-        self.LearnRate = 0.3
-        self.Discount = 0.6
+        self.LearnRate = 0.5
+        self.Discount = 0.4
         self.QCount = 0
 
 
@@ -71,8 +71,8 @@ class AgentW(AgentBase):
             self.Qtable[self.preY][self.preX][self.preAct] += self.LearnRate * ( self.__getReward() + self.Discount * self.__getMaxQValue(self.x, self.y) - self.Qtable[self.preY][self.preX][self.preAct] )
             if self.Qtable[self.preY][self.preX][self.preAct] < 0:
                 self.Qtable[self.preY][self.preX][self.preAct] = 0
-            if self.Qtable[self.preY][self.preX][self.preAct] > 25:
-                self.Qtable[self.preY][self.preX][self.preAct] = 25
+            #if self.Qtable[self.preY][self.preX][self.preAct] > 25:
+            #    self.Qtable[self.preY][self.preX][self.preAct] = 25
 
     def getQcount(self):
         return self.QCount
