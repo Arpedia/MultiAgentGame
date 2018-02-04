@@ -26,8 +26,8 @@ if __name__ == "__main__":
 
     targetNum = 5
     agentNum = 2
-
-    AgentLogic = 'W'
+    
+    AgentLogic = input('Agent(Z, Y ,W): ')
 
     Result = []
 
