@@ -26,6 +26,9 @@ if __name__ == "__main__":
 
     targetNum = 5
     agentNum = 2
+
+    fourcc = cv2.VideoWriter_fourcc(*'MP4V')
+    writer = cv2.VideoWriter('q-learning.mp4', fourcc, 10, (WindowSize, WindowSize))
     
     AgentLogic = input('Agent(Z, Y ,W): ')
 
@@ -104,8 +107,11 @@ if __name__ == "__main__":
             img = target.draw(img, size)
         for agent in AgentList:
             img = agent.draw(img, size)
-        #cv2.imshow('log', img)
-        #if cv2.waitKey() == 27: break 
+        
+        if Count == 0.9 * TrialCount:
+            cv2.imshow('log', img)
+            writer.write(img)
+            if cv2.waitKey() == 27: break 
 
         # 確保判定シーケンス
         for target in TargetList:
@@ -132,6 +138,7 @@ if __name__ == "__main__":
 
 
     # END LOOP
+
 
     # 結果のグラフ化----------------------------------------------------
     average5 = []
