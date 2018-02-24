@@ -135,6 +135,7 @@ if __name__ == "__main__":
             print(str(Count) + ":" + str(Step))
             Result.append(Step)
             Step = 0
+            cv2.destroyAllWindows()
 
 
     # END LOOP
