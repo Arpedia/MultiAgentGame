@@ -108,10 +108,10 @@ if __name__ == "__main__":
         for agent in AgentList:
             img = agent.draw(img, size)
         
-        if Count == 0.9 * TrialCount:
+        if Count % (TrialCount / 10) == 0:
             cv2.imshow('log', img)
             writer.write(img)
-            if cv2.waitKey() == 27: break 
+            if cv2.waitKey(1) == 27: break 
 
         # 確保判定シーケンス
         for target in TargetList:
@@ -178,6 +178,8 @@ if __name__ == "__main__":
     if AgentLogic == 'W':
         pyplot.title("Steps - Trials[Q-Learning-GAMMA]")
     pyplot.xlabel("Trial Counts")
+    pyplot.xlim([0, TrialCount])
     pyplot.ylabel("Steps")
+    pyplot.ylim([0, MaxStep])
     pyplot.legend()
     pyplot.show()
