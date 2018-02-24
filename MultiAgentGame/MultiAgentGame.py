@@ -170,13 +170,13 @@ if __name__ == "__main__":
     pyplot.plot([i * 10 for i in range(len(average10))], average10, color='green', label = "Steps(Average 10)")
     pyplot.plot([i * 50 for i in range(len(average50))], average50, color='red', label = "Steps(Average 50)")
     if AgentLogic == 'Z':
-        pyplot.title("Steps - Trials[Normal]")
+        pyplot.title("Steps - Trials[AgentZ]")
     if AgentLogic == 'Y':
-        pyplot.title("Steps - Trials[Q-Learning-ALPHA]")
+        pyplot.title("Steps - Trials[AgentY]")
     if AgentLogic == 'X':
-        pyplot.title("Steps - Trials[Q-Learning-BETA]")
+        pyplot.title("Steps - Trials[AgentX]")
     if AgentLogic == 'W':
-        pyplot.title("Steps - Trials[Q-Learning-GAMMA]")
+        pyplot.title("Steps - Trials[AgentW]")
     pyplot.xlabel("Trial Counts")
     pyplot.xlim([0, TrialCount])
     pyplot.ylabel("Steps")
