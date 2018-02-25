@@ -30,9 +30,9 @@ class AgentZ(AgentBase):
         return self.Qcount
 
     # Private Method
-    def __nextAction(self, around):
+    def __nextAction(self, around_save):
         action_index = []
-        around_save = around
+        around = np.copy(around_save)
 
         # 上三角の判定
         around[1][0] = 0
@@ -42,7 +42,7 @@ class AgentZ(AgentBase):
                 action_index.append(0)
                 break
 
-        around = around_save
+        around = np.copy(around_save)
         # 下三角の判定
         around[3][0] = 0
         around[3][4] = 0
@@ -51,7 +51,7 @@ class AgentZ(AgentBase):
                 action_index.append(1)
                 break
 
-        around = around_save
+        around = np.copy(around_save)
         # 左三角の判定
         around[0][1] = 0
         around[4][1] = 0
@@ -60,7 +60,7 @@ class AgentZ(AgentBase):
                 action_index.append(2)
                 break
 
-        around = around_save
+        around = np.copy(around_save)
         # 下三角の判定
         around[0][3] = 0
         around[4][3] = 0

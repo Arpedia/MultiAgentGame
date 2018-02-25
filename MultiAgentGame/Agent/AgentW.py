@@ -130,12 +130,12 @@ class AgentW(AgentBase):
         around = self.get_around(2)
         for around_y in around:
             if 1 in around_y:
-                return 3
-        return -1
+                return 5
+        return -0.1
 
-    def __nextActionNearbyTarget(self, around):
+    def __nextActionNearbyTarget(self, around_save):
         action_index = []
-        around_save = around
+        around = np.copy(around_save)
 
         # 上三角の判定
         around[1][0] = 0
@@ -145,7 +145,7 @@ class AgentW(AgentBase):
                 action_index.append(0)
                 break
 
-        around = around_save
+        around = np.copy(around_save)
         # 下三角の判定
         around[3][0] = 0
         around[3][4] = 0
@@ -154,7 +154,7 @@ class AgentW(AgentBase):
                 action_index.append(1)
                 break
 
-        around = around_save
+        around = np.copy(around_save)
         # 左三角の判定
         around[0][1] = 0
         around[4][1] = 0
@@ -163,7 +163,7 @@ class AgentW(AgentBase):
                 action_index.append(2)
                 break
 
-        around = around_save
+        around = np.copy(around_save)
         # 下三角の判定
         around[0][3] = 0
         around[4][3] = 0

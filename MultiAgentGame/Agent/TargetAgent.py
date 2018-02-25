@@ -42,9 +42,9 @@ class TargetAgent(AgentBase):
 
 
     # Private Method
-    def __refine_actionIndex(self, around):
+    def __refine_actionIndex(self, around_save):
         action_index = [ i for i in range(5) ]
-        around_save = around
+        around = np.copy(around_save)
         escapeFlag = False
 
         # 上三角の判定
@@ -58,7 +58,7 @@ class TargetAgent(AgentBase):
                 escapeFlag = True
                 break
 
-        around = around_save
+        around = np.copy(around_save)
         # 下三角の判定
         around[5][0] = 0
         around[5][6] = 0
@@ -70,7 +70,7 @@ class TargetAgent(AgentBase):
                 escapeFlag = True
                 break
 
-        around = around_save
+        around = np.copy(around_save)
         # 左三角の判定
         around[0][1] = 0
         around[6][1] = 0
@@ -82,7 +82,7 @@ class TargetAgent(AgentBase):
                 escapeFlag = True
                 break
 
-        around = around_save
+        around = np.copy(around_save)
         # 右三角の判定
         around[0][5] = 0
         around[6][5] = 0

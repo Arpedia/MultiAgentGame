@@ -24,7 +24,7 @@ if __name__ == "__main__":
     Count = 0
     Step = 0
 
-    targetNum = 10
+    targetNum = 7
     agentNum = 2
     
     AgentLogic = input('Agent(Z, Y ,W): ')
