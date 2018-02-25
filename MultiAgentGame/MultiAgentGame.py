@@ -24,13 +24,13 @@ if __name__ == "__main__":
     Count = 0
     Step = 0
 
-    targetNum = 5
+    targetNum = 10
     agentNum = 2
-
-    fourcc = cv2.VideoWriter_fourcc(*'MP4V')
-    writer = cv2.VideoWriter('q-learning.mp4', fourcc, 10, (WindowSize, WindowSize))
     
     AgentLogic = input('Agent(Z, Y ,W): ')
+
+    fourcc = cv2.VideoWriter_fourcc(*'MP4V')
+    writer = cv2.VideoWriter('q-learning' + AgentLogic + '.mp4', fourcc, 10, (WindowSize, WindowSize))
 
     Result = []
 
@@ -100,20 +100,21 @@ if __name__ == "__main__":
 
 
         # 描画シーケンス---------------------------------------------
-        img = np.zeros( (WindowSize, WindowSize, 3), np.uint8 )
-        for target in TargetList:
-            if not target.validFlag:
-                continue
-            img = target.draw(img, size)
-        for agent in AgentList:
-            img = agent.draw(img, size)
+        if AgentLogic == 'W':
+            img = np.zeros( (WindowSize, WindowSize, 3), np.uint8 )
+            for target in TargetList:
+                if not target.validFlag:
+                    continue
+                img = target.draw(img, size)
+            for agent in AgentList:
+                img = agent.draw(img, size)
         
-        if Count % (TrialCount / 10) == 0:
-            cv2.imshow('log', img)
-            writer.write(img)
-            if cv2.waitKey(1) == 27: break 
+            if Count % (TrialCount / 10) == 0:
+                cv2.imshow('log', img)
+                writer.write(img)
+                if cv2.waitKey(1) == 27: break 
 
-        # 確保判定シーケンス
+        # 確保判定シーケンス---------------------------------------------
         for target in TargetList:
             if not target.validFlag:
                 continue
