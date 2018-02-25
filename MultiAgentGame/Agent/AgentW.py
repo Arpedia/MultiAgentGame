@@ -77,6 +77,9 @@ class AgentW(AgentBase):
     def getQcount(self):
         return self.QCount
 
+    def showQ(self):
+        print(self.Qtable)
+
     # Private Method
     def __resetQtable(self):
         self.Qtable = []
