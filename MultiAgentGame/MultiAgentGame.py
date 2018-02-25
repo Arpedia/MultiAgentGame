@@ -141,6 +141,16 @@ if __name__ == "__main__":
 
     # END LOOP
 
+    # Q値の表示
+        ## 確保エージェント--AgentX
+    if AgentLogic == 'Y':
+        for agent in AgentList:
+            agent.showQ()
+        ## 確保エージェント--AgentW
+    if AgentLogic == 'W':
+        for agent in AgentList:
+            agent.showQ()
+
 
     # 結果のグラフ化----------------------------------------------------
     average5 = []
